@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "villagertrades",
+  "version": "${version}",
+  "name": "Villager Trades",
+  "description": "Server sided utility mod to edit villager trades",
+  "authors": [
+    "Flemmli97"
+  ],
+  "contact": {
+    "homepage": "${homepage}",
+    "issues": "https://github.com/Flemmli97/VillagerTrades/issues",
+    "sources": "https://github.com/Flemmli97/VillagerTrades"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.flemmli97.villagertrades.fabric.VillagerTradesFabric"
+    ]
+  },
+  "mixins": [
+    "villagertrades.mixins.json"
+  ],
+  "depends": {
+    "fabric": ">=${fabric_version}",
+    "minecraft": ">=${mcversion}"
+  }
+}

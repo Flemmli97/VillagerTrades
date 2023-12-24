@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.flemmli97.villagertrades.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "AbstractContainerAccessor",
+    "AbstractVillagerMixin",
+    "MerchantOfferMixin",
+    "MerchantOfferAccessor"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
