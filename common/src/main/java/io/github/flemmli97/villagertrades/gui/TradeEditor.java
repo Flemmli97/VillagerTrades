@@ -218,6 +218,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
     public int getOfferIndex(int index) {
         if (index < 18)
             return -1;
+        index -= 18;
         int idx = index / 9 + OFFERS_PER_PAGE * this.page;
         if (index % 9 > 4) {
             idx += 4;

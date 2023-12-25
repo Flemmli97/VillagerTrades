@@ -147,7 +147,6 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
                             case 16 -> ((MerchantOfferAccessor) this.offer).setDemand(amount);
                             case 14 -> ((MerchantOfferAccessor) this.offer).setXp(amount);
                         }
-                        ((MerchantOfferAccessor) this.offer).setUses(amount);
                         TradeEditor.playSongToPlayer(player, SoundEvents.ANVIL_USE, 1, 1f);
                     } catch (NumberFormatException e) {
                         TradeEditor.playSongToPlayer(player, SoundEvents.VILLAGER_NO, 1, 1f);
