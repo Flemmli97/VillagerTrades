@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[${loader_version},)"
-license="All rights reserved"
+license="MIT"
 issueTrackerURL=""
 [[mixins]]
 config = "villagertrades.mixins.json"
