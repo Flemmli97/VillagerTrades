@@ -144,7 +144,7 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
                 if (!excluded.test(i)) {
                     slot = this.slots.get(i);
                     itemStack = slot.getItem();
-                    if (!itemStack.isEmpty() && ItemStack.isSameItemSameTags(stack, itemStack)) {
+                    if (!itemStack.isEmpty() && ItemStack.isSameItemSameComponents(stack, itemStack)) {
                         int j = itemStack.getCount() + stack.getCount();
                         if (j <= stack.getMaxStackSize()) {
                             stack.setCount(0);

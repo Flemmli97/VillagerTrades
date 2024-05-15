@@ -1,11 +1,12 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.VillagerTrades;
 import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentPredicate;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -22,11 +23,15 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.IntPredicate;
 
 public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Data> {
@@ -71,13 +76,13 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
 
     public static ItemStack emptyFiller() {
         ItemStack stack = new ItemStack(Items.GRAY_STAINED_GLASS_PANE);
-        stack.setHoverName(Component.literal(""));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         return stack;
     }
 
     public static ItemStack tradingFiller() {
         ItemStack stack = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
-        stack.setHoverName(Component.literal(""));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         return stack;
     }
 
@@ -100,20 +105,20 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
         for (int i = 0; i < 54; i++) {
             if (i == 0) {
                 ItemStack stack = new ItemStack(Items.BARRIER);
-                stack.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.close")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.close")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 inv.updateStack(i, stack);
             } else if (i == 1) {
                 ItemStack stack = ItemStack.EMPTY;
                 if (this.page > 0) {
                     stack = new ItemStack(Items.ARROW);
-                    stack.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.previous")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.previous")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 inv.updateStack(i, stack);
             } else if (i == 8) {
                 ItemStack close = ItemStack.EMPTY;
                 if (this.page < this.maxPages) {
                     close = new ItemStack(Items.ARROW);
-                    close.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    close.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 inv.updateStack(i, close);
             } else if (i / 9 == 1)
@@ -143,9 +148,9 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
 
     private static ItemStack offerEditStack(MerchantOffer offer) {
         ItemStack stack = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
-        stack.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit"))
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit"))
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.AQUA)));
-        VillagerTrades.addLore(stack, List.of(
+        stack.set(DataComponents.LORE, new ItemLore(List.of(
                 ((MerchantOfferMixinInterface) offer).isInfinite() ?
                         Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.infinite"))
                                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
@@ -158,9 +163,10 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
                 Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.price"), offer.getPriceMultiplier(), offer.getSpecialPriceDiff())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
-        ));
+        )));
         stack.enchant(Enchantments.UNBREAKING, 1);
-        stack.hideTooltipPart(ItemStack.TooltipPart.ENCHANTMENTS);
+        stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
+                .withTooltip(false));
         return stack;
     }
 
@@ -170,20 +176,20 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
         for (int i = 0; i < 54; i++) {
             if (i == 0) {
                 ItemStack stack = new ItemStack(Items.BARRIER);
-                stack.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.close")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.close")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 this.slots.get(i).set(stack);
             } else if (i == 1) {
                 ItemStack stack = ItemStack.EMPTY;
                 if (this.page > 0) {
                     stack = new ItemStack(Items.ARROW);
-                    stack.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.previous")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.previous")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 this.slots.get(i).set(stack);
             } else if (i == 8) {
                 ItemStack next = ItemStack.EMPTY;
                 if (this.page < this.maxPages) {
                     next = new ItemStack(Items.ARROW);
-                    next.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    next.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 this.slots.get(i).set(next);
             } else if (i / 9 == 1)
@@ -256,12 +262,14 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
             }
         } else {
             MerchantOffer offer;
+            ItemCost firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentPredicate.allOf(first.getComponents()));
+            ItemCost secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
             if (offerIndex < offers.size()) {
                 MerchantOffer current = offers.get(offerIndex);
-                offer = new MerchantOffer(first, second, result, current.getUses(), current.getMaxUses(), current.getXp(), current.getPriceMultiplier(), current.getDemand());
+                offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, current.getUses(), current.getMaxUses(), current.getXp(), current.getPriceMultiplier(), current.getDemand());
                 offers.set(offerIndex, offer);
             } else {
-                offer = new MerchantOffer(first, second, result, 0, 4, 0, 0, 0);
+                offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, 0, 4, 0, 0, 0);
                 offers.add(offer);
             }
             this.slots.get(firstIdx + 2).set(offerEditStack(offer));

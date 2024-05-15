@@ -2,6 +2,7 @@ package io.github.flemmli97.villagertrades.gui;
 
 import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import io.github.flemmli97.villagertrades.mixin.AbstractContainerAccessor;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundSetExperiencePacket;
@@ -35,10 +36,10 @@ public class StringResultScreenHandler extends AnvilMenu {
     private StringResultScreenHandler(int syncId, Inventory playerInventory, Consumer<String> cons, Runnable ret) {
         super(syncId, playerInventory);
         ItemStack stack = new ItemStack(Items.PAPER);
-        stack.setHoverName(Component.literal(""));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         this.inputSlots.setItem(0, stack);
         ItemStack out = new ItemStack(Items.BOOK);
-        out.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.string.result")).setStyle(Style.EMPTY.withItalic(false)));
+        out.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.string.result")).setStyle(Style.EMPTY.withItalic(false)));
         this.resultSlots.setItem(0, out);
         this.cons = cons;
         this.ret = ret;
@@ -79,7 +80,7 @@ public class StringResultScreenHandler extends AnvilMenu {
         if (i == 0)
             this.ret.run();
         else if (i == 2) {
-            String s = slot.getItem().hasCustomHoverName() ? slot.getItem().getHoverName().getString() : "";
+            String s = slot.getItem().has(DataComponents.CUSTOM_NAME) ? slot.getItem().get(DataComponents.CUSTOM_NAME).getString() : "";
             if (!s.isEmpty() && !s.equals(ConfigHandler.LANG.get("stringScreenReturn"))) {
                 this.cons.accept(s);
             }
@@ -96,7 +97,7 @@ public class StringResultScreenHandler extends AnvilMenu {
             this.ret.run();
         else if (index == 2) {
             Slot slot = this.slots.get(index);
-            String s = slot.getItem().hasCustomHoverName() ? slot.getItem().getHoverName().getString() : "";
+            String s = slot.getItem().has(DataComponents.CUSTOM_NAME) ? slot.getItem().get(DataComponents.CUSTOM_NAME).getString() : "";
             if (!s.isEmpty() && !s.equals(ConfigHandler.LANG.get("villagertrades.gui.string.result")))
                 this.cons.accept(s);
             ((ServerPlayer) player).connection.send(new ClientboundSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
@@ -124,9 +125,9 @@ public class StringResultScreenHandler extends AnvilMenu {
         else {
             ItemStack out = this.slots.get(2).getItem();
             if (StringUtils.isBlank(this.name))
-                out.resetHoverName();
+                out.remove(DataComponents.CUSTOM_NAME);
             else if (!this.name.equals(out.getHoverName().getString())) {
-                out.setHoverName(Component.literal(this.name));
+                out.set(DataComponents.CUSTOM_NAME, Component.literal(this.name));
             }
         }
         this.broadcastChanges();
