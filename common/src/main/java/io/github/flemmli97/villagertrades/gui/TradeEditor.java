@@ -5,9 +5,11 @@ import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -47,16 +49,11 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
     };
 
     private int page, maxPages;
-    private AbstractVillager villager;
-    private final ServerPlayer player;
+    private final AbstractVillager villager;
 
     protected TradeEditor(int syncId, Inventory playerInventory, Data data) {
         super(syncId, playerInventory, 6, true, IS_TRADE_SLOT, data);
         this.villager = data.villager;
-        if (playerInventory.player instanceof ServerPlayer)
-            this.player = (ServerPlayer) playerInventory.player;
-        else
-            throw new IllegalStateException("This is a server side container");
     }
 
     public static void openGui(ServerPlayer player, AbstractVillager villager) {
@@ -98,7 +95,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
 
     @Override
     protected void fillInventoryWith(Player player, SeparateInv inv, Data data) {
-        if (!(player instanceof ServerPlayer))
+        if (!(player instanceof ServerPlayer serverPlayer))
             return;
         MerchantOffers offers = data.villager.getOffers();
         this.maxPages = offers.size() / OFFERS_PER_PAGE;
@@ -140,13 +137,13 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                     firstIdx = 18 + (x - 4) * 9 + 5;
                 inv.updateStack(firstIdx, offer.getBaseCostA());
                 inv.updateStack(firstIdx + 1, offer.getCostB());
-                inv.updateStack(firstIdx + 2, offerEditStack(offer));
+                inv.updateStack(firstIdx + 2, offerEditStack(offer, serverPlayer.serverLevel().registryAccess()));
                 inv.updateStack(firstIdx + 3, offer.getResult());
             }
         }
     }
 
-    private static ItemStack offerEditStack(MerchantOffer offer) {
+    private static ItemStack offerEditStack(MerchantOffer offer, RegistryAccess registryAccess) {
         ItemStack stack = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit"))
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.AQUA)));
@@ -164,7 +161,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                 Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.price"), offer.getPriceMultiplier(), offer.getSpecialPriceDiff())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
         )));
-        stack.enchant(Enchantments.UNBREAKING, 1);
+        stack.enchant(registryAccess.registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
         stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
                 .withTooltip(false));
         return stack;
@@ -214,7 +211,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                     firstIdx = 18 + (x - 4) * 9 + 5;
                 this.slots.get(firstIdx).set(offer.getBaseCostA());
                 this.slots.get(firstIdx + 1).set(offer.getCostB());
-                this.slots.get(firstIdx + 2).set(offerEditStack(offer));
+                this.slots.get(firstIdx + 2).set(offerEditStack(offer, this.villager.level().registryAccess()));
                 this.slots.get(firstIdx + 3).set(offer.getResult());
             }
         }
@@ -272,7 +269,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                 offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, 0, 4, 0, 0, 0);
                 offers.add(offer);
             }
-            this.slots.get(firstIdx + 2).set(offerEditStack(offer));
+            this.slots.get(firstIdx + 2).set(offerEditStack(offer, this.villager.level().registryAccess()));
         }
         this.flipPage();
         /*this.maxPages = offers.size() / OFFERS_PER_PAGE;

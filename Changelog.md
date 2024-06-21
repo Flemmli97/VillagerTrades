@@ -1,4 +1,4 @@
 Villager Trades 1.0.0
 =================
-- Update to 1.20.6
+- Update to 1.21
 ~~- Initial Release~~

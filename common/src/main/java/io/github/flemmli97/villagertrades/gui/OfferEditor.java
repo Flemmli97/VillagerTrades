@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -33,8 +34,8 @@ import java.util.function.BiConsumer;
 
 public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
 
-    private AbstractVillager villager;
-    private MerchantOffer offer;
+    private final AbstractVillager villager;
+    private final MerchantOffer offer;
 
     protected OfferEditor(int syncId, Inventory playerInventory, OfferEditor.Data data) {
         super(syncId, playerInventory, 4, data);
@@ -102,7 +103,7 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
         stack = new ItemStack(Items.LAPIS_LAZULI);
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.rewardExp")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
         if (offer.shouldRewardExp()) {
-            stack.enchant(Enchantments.UNBREAKING, 1);
+            stack.enchant(this.villager.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
             stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
                     .withTooltip(false));
         }
