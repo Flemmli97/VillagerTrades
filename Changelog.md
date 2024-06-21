@@ -1,4 +1,8 @@
-Villager Trades 1.0.0
+Villager Trades 1.0.1
 =================
 - Update to 1.21
-~~- Initial Release~~
+- Fix empty item in first trade slot causing crashes and save corruption
+
+Villager Trades 1.0.0
+=================
+- Initial Release
