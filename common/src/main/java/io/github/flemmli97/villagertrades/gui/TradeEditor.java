@@ -257,7 +257,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
             if (offerIndex < offers.size()) {
                 offers.remove(offerIndex);
             }
-        } else {
+        } else if (!first.isEmpty()) {
             MerchantOffer offer;
             ItemCost firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentPredicate.allOf(first.getComponents()));
             ItemCost secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
