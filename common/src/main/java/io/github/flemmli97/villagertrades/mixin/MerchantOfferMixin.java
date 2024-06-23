@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MerchantOfferMixin implements MerchantOfferMixinInterface {
 
     @Unique
-    private boolean villagerTrades_infinite;
-    @Unique
     private int villagerTrades_maxUses;
+    @Unique
+    private int villagerTrades_uses;
 
     @Shadow
     private int uses;
@@ -28,22 +28,23 @@ public class MerchantOfferMixin implements MerchantOfferMixinInterface {
     public void setInfinite(boolean flag) {
         if (flag) {
             this.villagerTrades_maxUses = this.maxUses;
-            this.villagerTrades_infinite = true;
-            this.uses = 0;
+            this.villagerTrades_uses = this.uses;
+            this.maxUses = -1;
+            this.uses = -2;
         } else {
             this.maxUses = this.villagerTrades_maxUses;
-            this.villagerTrades_infinite = false;
+            this.uses = this.villagerTrades_uses;
         }
     }
 
     @Override
     public boolean isInfinite() {
-        return this.villagerTrades_infinite;
+        return this.maxUses == -1;
     }
 
     @Inject(method = "increaseUses", at = @At("HEAD"), cancellable = true)
     private void onIncrease(CallbackInfo info) {
-        if (this.villagerTrades_infinite)
+        if (this.maxUses == -1)
             info.cancel();
     }
 }
