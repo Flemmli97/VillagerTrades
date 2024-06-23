@@ -6,6 +6,7 @@ import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import io.github.flemmli97.villagertrades.mixin.MerchantOfferAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -71,10 +72,10 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
     protected void fillInventoryWith(Player player, SeparateInv inv, OfferEditor.Data data) {
         if (!(player instanceof ServerPlayer))
             return;
-        this.update(data.offer, inv::updateStack);
+        this.update(data.offer, inv::updateStack, data.villager.registryAccess());
     }
 
-    private void update(MerchantOffer offer, BiConsumer<Integer, ItemStack> consumer) {
+    private void update(MerchantOffer offer, BiConsumer<Integer, ItemStack> consumer, RegistryAccess registryAccess) {
         for (int i = 0; i < 36; i++) {
             if (i == 0) {
                 ItemStack stack = new ItemStack(Items.RED_TERRACOTTA);
@@ -190,7 +191,7 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
                 TradeEditor.playSongToPlayer(player, SoundEvents.UI_BUTTON_CLICK, 1, 1f);
             }
         }
-        this.update(this.offer, (i, stack) -> this.getSlot(i).set(stack));
+        this.update(this.offer, (i, stack) -> this.getSlot(i).set(stack), this.villager.registryAccess());
         return true;
     }
 

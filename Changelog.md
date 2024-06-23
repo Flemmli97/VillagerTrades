@@ -1,3 +1,7 @@
+Villager Trades 1.0.2
+=================
+- Fix nullpointer with offer editor
+
 Villager Trades 1.0.1
 =================
 - Fix empty item in first trade slot causing crashes and save corruption
