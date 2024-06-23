@@ -41,7 +41,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
     public static int OFFERS_PER_PAGE = 8;
     private static final IntPredicate IS_TRADE_SLOT = index -> {
         int mod = index % 9;
-        return index < 54 && index > 17 && mod != 2 && mod != 4 && mod != 7;
+        return index <= 54 && index > 17 && mod != 2 && mod != 4 && mod != 7;
     };
     private static final IntPredicate IS_EDIT_SLOT = index -> {
         int mod = index % 9;
