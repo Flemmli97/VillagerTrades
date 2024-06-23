@@ -1,6 +1,8 @@
 VillagerTrades 1.0.2
 =================
 - Fix nullpointer with offer editor
+- Fix an inventory slot not clickable in trade editor
+- Redo infinite trades fixing the problem of them not persisting across saves
 
 VillagerTrades 1.0.1
 =================
