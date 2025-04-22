@@ -98,7 +98,7 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
         consumer.accept(19, stack);
         stack = new ItemStack(((MerchantOfferMixinInterface) offer).isInfinite() ? Items.EMERALD_BLOCK : Items.REDSTONE_BLOCK);
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.infinite")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.infinite"), stack.is(Items.EMERALD_BLOCK))
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.infinite"), stack.is(Items.EMERALD_BLOCK) ? "true" : "false")
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(12, stack);
         stack = new ItemStack(Items.LAPIS_LAZULI);
@@ -108,7 +108,7 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
             stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
                     .withTooltip(false));
         }
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.rewardExp"), offer.shouldRewardExp())
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.rewardExp"), offer.shouldRewardExp() ? "true" : "false")
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(21, stack);
         stack = new ItemStack(Items.BOOK);
