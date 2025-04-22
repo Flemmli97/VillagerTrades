@@ -1,6 +1,5 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import io.github.flemmli97.villagertrades.mixin.MerchantOfferAccessor;
@@ -53,7 +52,7 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
 
             @Override
             public Component getDisplayName() {
-                return Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit"));
+                return Component.translatable("villagertrades.gui.offer.edit");
             }
         };
         player.openMenu(fac);
@@ -80,55 +79,55 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
         for (int i = 0; i < 36; i++) {
             if (i == 0) {
                 ItemStack stack = new ItemStack(Items.RED_TERRACOTTA);
-                stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.back")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.back").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 consumer.accept(i, stack);
             } else if (i < 9 || i > 27 || i % 9 == 0 || i % 9 == 8) {
                 consumer.accept(i, TradeEditor.emptyFiller());
             }
         }
         ItemStack stack = new ItemStack(Items.WHEAT);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.uses")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.uses"), offer.getUses())
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.uses").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.uses", offer.getUses())
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(10, stack);
         stack = new ItemStack(Items.EMERALD_ORE);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.maxUses")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.maxUses"), offer.getMaxUses())
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.maxUses").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.maxUses", offer.getMaxUses())
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(19, stack);
         stack = new ItemStack(((MerchantOfferMixinInterface) offer).isInfinite() ? Items.EMERALD_BLOCK : Items.REDSTONE_BLOCK);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.infinite")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.infinite"), stack.is(Items.EMERALD_BLOCK) ? "true" : "false")
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.infinite").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.infinite", Component.translatable(stack.is(Items.EMERALD_BLOCK) ? "villagertrades.gui.true" : "villagertrades.gui.false"))
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(12, stack);
         stack = new ItemStack(Items.LAPIS_LAZULI);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.rewardExp")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.rewardExp").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
         if (offer.shouldRewardExp()) {
             stack.enchant(registryAccess.registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
             stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
                     .withTooltip(false));
         }
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.rewardExp"), offer.shouldRewardExp() ? "true" : "false")
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.rewardExp", Component.translatable(offer.shouldRewardExp() ? "villagertrades.gui.true" : "villagertrades.gui.false"))
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(21, stack);
         stack = new ItemStack(Items.BOOK);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.xp")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.xp"), offer.getXp())
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.xp").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.xp", offer.getXp())
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(14, stack);
         stack = new ItemStack(Items.IRON_INGOT);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.specialPriceDiff")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.specialPriceDiff"), offer.getSpecialPriceDiff())
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.specialPriceDiff").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.specialPriceDiff", offer.getSpecialPriceDiff())
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(23, stack);
         stack = new ItemStack(Items.LECTERN);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.demand")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.demand"), offer.getDemand())
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.demand").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.demand", offer.getDemand())
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(16, stack);
         stack = new ItemStack(Items.DIAMOND);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.edit.priceMultiplier")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.offer.tooltip.priceMultiplier"), offer.getPriceMultiplier())
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.priceMultiplier").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+        stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.priceMultiplier", offer.getPriceMultiplier())
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
         consumer.accept(25, stack);
     }

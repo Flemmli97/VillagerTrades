@@ -4,8 +4,8 @@ loom {
     runs {
         data {
             data()
-            programArgs "--all", "--mod", "simplequests"
-            property("ExampleGenPath", project.rootProject.file("Example-Datapack/Datapack").absolutePath)
+            programArgs "--all", "--mod", "villagertrades"
+            programArgs "--output", project(":common").file("src/generated/resources").absolutePath
         }
     }
 }
@@ -16,10 +16,15 @@ repositories {
         name = "FTB"
         url = "https://maven.saps.dev/minecraft"
     }
+    maven {
+        name = "LinguaBib"
+        url "https://gitlab.com/api/v4/projects/21830712/packages/maven"
+    }
 }
 
 dependencies {
     modCompileOnly("dev.ftb.mods:ftb-ranks-neoforge:${ftb_ranks}")
+    modImplementation include("io.github.flemmli97:lingua_bib:${lingua_bib}-neoforge")
 }
 
 shadowJar {

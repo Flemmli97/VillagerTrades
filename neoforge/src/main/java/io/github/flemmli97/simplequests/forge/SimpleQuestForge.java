@@ -2,7 +2,6 @@ package io.github.flemmli97.simplequests.forge;
 
 import io.github.flemmli97.villagertrades.TraderCommand;
 import io.github.flemmli97.villagertrades.VillagerTrades;
-import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -14,7 +13,6 @@ public class SimpleQuestForge {
     public SimpleQuestForge() {
         VillagerTrades.updateLoaderImpl(new LoaderImpl());
         NeoForge.EVENT_BUS.addListener(SimpleQuestForge::command);
-        ConfigHandler.init();
         VillagerTrades.FTB_RANKS = ModList.get().isLoaded("ftbranks");
     }
 

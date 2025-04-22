@@ -1,6 +1,5 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import net.minecraft.ChatFormatting;
@@ -102,20 +101,20 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
         for (int i = 0; i < 54; i++) {
             if (i == 0) {
                 ItemStack stack = new ItemStack(Items.BARRIER);
-                stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.close")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.close").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 inv.updateStack(i, stack);
             } else if (i == 1) {
                 ItemStack stack = ItemStack.EMPTY;
                 if (this.page > 0) {
                     stack = new ItemStack(Items.ARROW);
-                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.previous")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.previous").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 inv.updateStack(i, stack);
             } else if (i == 8) {
                 ItemStack close = ItemStack.EMPTY;
                 if (this.page < this.maxPages) {
                     close = new ItemStack(Items.ARROW);
-                    close.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    close.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.next").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 inv.updateStack(i, close);
             } else if (i / 9 == 1)
@@ -145,20 +144,20 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
 
     private static ItemStack offerEditStack(MerchantOffer offer, RegistryAccess registryAccess) {
         ItemStack stack = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
-        stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit"))
+        stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.trade.edit")
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.AQUA)));
         stack.set(DataComponents.LORE, new ItemLore(List.of(
                 ((MerchantOfferMixinInterface) offer).isInfinite() ?
-                        Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.infinite"))
+                        Component.translatable("villagertrades.gui.trade.edit.infinite")
                                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
                         :
-                        Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.uses"), offer.getUses(), offer.getMaxUses())
+                        Component.translatable("villagertrades.gui.trade.edit.uses", offer.getUses(), offer.getMaxUses())
                                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
-                Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.xp"), offer.shouldRewardExp(), offer.getXp())
+                Component.translatable("villagertrades.gui.trade.edit.xp", offer.shouldRewardExp(), offer.getXp())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
-                Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.demand"), offer.getDemand())
+                Component.translatable("villagertrades.gui.trade.edit.demand", offer.getDemand())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
-                Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.trade.edit.price"), offer.getPriceMultiplier(), offer.getSpecialPriceDiff())
+                Component.translatable("villagertrades.gui.trade.edit.price", offer.getPriceMultiplier(), offer.getSpecialPriceDiff())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
         )));
         stack.enchant(registryAccess.registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
@@ -173,20 +172,20 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
         for (int i = 0; i < 54; i++) {
             if (i == 0) {
                 ItemStack stack = new ItemStack(Items.BARRIER);
-                stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.close")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.close").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 this.slots.get(i).set(stack);
             } else if (i == 1) {
                 ItemStack stack = ItemStack.EMPTY;
                 if (this.page > 0) {
                     stack = new ItemStack(Items.ARROW);
-                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.previous")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.previous").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 this.slots.get(i).set(stack);
             } else if (i == 8) {
                 ItemStack next = ItemStack.EMPTY;
                 if (this.page < this.maxPages) {
                     next = new ItemStack(Items.ARROW);
-                    next.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+                    next.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.next").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
                 this.slots.get(i).set(next);
             } else if (i / 9 == 1)
@@ -275,7 +274,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
         /*this.maxPages = offers.size() / OFFERS_PER_PAGE;
         if (this.page < this.maxPages) {
             ItemStack next = new ItemStack(Items.ARROW);
-            next.setHoverName(Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.next")).setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
+            next.setHoverName(Component.translatable("villagertrades.gui.next").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
             this.slots.get(8).set(next);
         } else {
             this.slots.get(8).set(ItemStack.EMPTY);

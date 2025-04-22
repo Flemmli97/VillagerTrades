@@ -1,6 +1,5 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import io.github.flemmli97.villagertrades.mixin.AbstractContainerAccessor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -39,7 +38,7 @@ public class StringResultScreenHandler extends AnvilMenu {
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         this.inputSlots.setItem(0, stack);
         ItemStack out = new ItemStack(Items.BOOK);
-        out.set(DataComponents.CUSTOM_NAME, Component.translatable(ConfigHandler.LANG.get("villagertrades.gui.string.result")).setStyle(Style.EMPTY.withItalic(false)));
+        out.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.string.result").setStyle(Style.EMPTY.withItalic(false)));
         this.resultSlots.setItem(0, out);
         this.cons = cons;
         this.ret = ret;
@@ -81,7 +80,7 @@ public class StringResultScreenHandler extends AnvilMenu {
             this.ret.run();
         else if (i == 2) {
             String s = slot.getItem().has(DataComponents.CUSTOM_NAME) ? slot.getItem().get(DataComponents.CUSTOM_NAME).getString() : "";
-            if (!s.isEmpty() && !s.equals(ConfigHandler.LANG.get("stringScreenReturn"))) {
+            if (!s.isEmpty() && !s.equals("stringScreenReturn")) {
                 this.cons.accept(s);
             }
             player.connection.send(new ClientboundSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
@@ -98,7 +97,7 @@ public class StringResultScreenHandler extends AnvilMenu {
         else if (index == 2) {
             Slot slot = this.slots.get(index);
             String s = slot.getItem().has(DataComponents.CUSTOM_NAME) ? slot.getItem().get(DataComponents.CUSTOM_NAME).getString() : "";
-            if (!s.isEmpty() && !s.equals(ConfigHandler.LANG.get("villagertrades.gui.string.result")))
+            if (!s.isEmpty() && !s.equals("villagertrades.gui.string.result"))
                 this.cons.accept(s);
             ((ServerPlayer) player).connection.send(new ClientboundSetExperiencePacket(player.experienceProgress, player.totalExperience, player.experienceLevel));
         }

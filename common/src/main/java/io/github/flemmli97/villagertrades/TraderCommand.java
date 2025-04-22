@@ -4,7 +4,6 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.github.flemmli97.villagertrades.config.ConfigHandler;
 import io.github.flemmli97.villagertrades.gui.TradeEditor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -29,7 +28,7 @@ public class TraderCommand {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         Entity entity = EntityArgument.getEntity(ctx, "villager");
         if (!(entity instanceof AbstractVillager villager)) {
-            ctx.getSource().sendFailure(Component.translatable(ConfigHandler.LANG.get("villagertrades.command.not.villager")).withStyle(ChatFormatting.DARK_RED));
+            ctx.getSource().sendFailure(Component.translatable("villagertrades.command.not.villager").withStyle(ChatFormatting.DARK_RED));
             return 0;
         }
         TradeEditor.openGui(player, villager);
