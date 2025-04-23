@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.IntPredicate;
 
@@ -78,20 +79,20 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
     }
 
     @Override
-    public void clicked(int i, int j, ClickType actionType, Player playerEntity) {
+    public void clicked(int i, int mouse, ClickType clickType, Player playerEntity) {
         if (i == -999) {
-            super.clicked(i, j, actionType, playerEntity);
+            super.clicked(i, mouse, clickType, playerEntity);
             return;
         }
         if (i < 0)
             return;
         if (i > 54 || this.allowed.test(i))
-            super.clicked(i, j, actionType, playerEntity);
+            super.clicked(i, mouse, clickType, playerEntity);
         Slot slot = this.slots.get(i);
-        if (this.isRightSlot(i)) {
+        if (this.isRightSlot(i, clickType)) {
             if (((AbstractContainerAccessor) this).containerSync() != null)
                 ((AbstractContainerAccessor) this).containerSync().sendCarriedChange(this, this.getCarried().copy());
-            this.handleSlotClicked((ServerPlayer) playerEntity, i, slot, j);
+            this.handleSlotClicked((ServerPlayer) playerEntity, i, slot, mouse);
         }
         ItemStack stack = slot.getItem().copy();
         for (ContainerListener listener : ((AbstractContainerAccessor) this).listeners())
@@ -104,7 +105,7 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
             return ItemStack.EMPTY;
         if (index < 54 && !this.allowed.test(index)) {
             Slot slot = this.slots.get(index);
-            if (this.isRightSlot(index))
+            if (this.isRightSlot(index, null))
                 this.handleSlotClicked((ServerPlayer) player, index, slot, 0);
             return slot.getItem().copy();
         }
@@ -126,7 +127,7 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
                 slot.setChanged();
             }
         }
-        if (this.isRightSlot(index))
+        if (this.isRightSlot(index, null))
             this.handleSlotClicked((ServerPlayer) player, index, slot, 0);
         return itemStack;
     }
@@ -196,7 +197,7 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
         return bl;
     }
 
-    protected abstract boolean isRightSlot(int slot);
+    protected abstract boolean isRightSlot(int slot, @Nullable ClickType clickType);
 
     /**
      * @param clickType 0 for left click, 1 for right click

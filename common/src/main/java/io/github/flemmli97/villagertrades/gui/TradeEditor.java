@@ -21,6 +21,7 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -314,7 +315,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
     }
 
     @Override
-    protected boolean isRightSlot(int slot) {
+    protected boolean isRightSlot(int slot, ClickType clickType) {
         return slot == 0 || (this.page > 0 && slot == 1) || (this.page < this.maxPages && slot == 8) || IS_TRADE_SLOT.test(slot)
                 || IS_EDIT_SLOT.test(slot);
     }

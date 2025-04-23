@@ -133,7 +133,7 @@ public class OfferEditor extends ServerOnlyScreenHandler<OfferEditor.Data> {
     }
 
     @Override
-    protected boolean handleSlotClicked(ServerPlayer player, int index, Slot slot, int clickType) {
+    protected boolean handleSlotClicked(ServerPlayer player, int index, Slot slot, int mouse) {
         if (index == 0) {
             TradeEditor.openGui(player, this.villager);
             TradeEditor.playSongToPlayer(player, SoundEvents.UI_BUTTON_CLICK, 1, 1f);
