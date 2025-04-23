@@ -3,12 +3,17 @@ apply from: "https://raw.githubusercontent.com/Flemmli97/GradleScripts/arch-loom
 repositories {
     mavenLocal()
     maven {
+        name = "FTB"
+        url = "https://maven.ftb.dev/releases"
+    }
+    maven {
         name = "LinguaBib"
         url "https://gitlab.com/api/v4/projects/21830712/packages/maven"
     }
 }
 
 dependencies {
+    modCompileOnly("dev.ftb.mods:ftb-ranks:${rootProject.ftb_ranks}")
     modImplementation "io.github.flemmli97:lingua_bib:${lingua_bib}-common"
 }
 
