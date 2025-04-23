@@ -1,6 +1,5 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.gui.inv.SeparateInvImpl;
 import io.github.flemmli97.villagertrades.gui.inv.SlotDelegate;
 import io.github.flemmli97.villagertrades.mixin.AbstractContainerAccessor;
@@ -18,19 +17,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.IntPredicate;
 
-public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContainerMenu {
+public abstract class EditableServerOnlyScreenHandler extends AbstractContainerMenu {
 
     protected final int size;
     private final SeparateInvImpl inventory;
     private final IntPredicate allowed;
 
-    protected EditableServerOnlyScreenHandler(int syncId, Inventory playerInventory, int rows, boolean canMoveItems, IntPredicate allowedSlots, T additionalData) {
+    protected EditableServerOnlyScreenHandler(int syncId, Inventory playerInventory, int rows, boolean canMoveItems, IntPredicate allowedSlots) {
         super(fromRows(rows), syncId);
         int i = (rows - 4) * 18;
         this.allowed = allowedSlots;
         this.inventory = new SeparateInvImpl(rows * 9, allowedSlots);
         this.size = this.inventory.getContainerSize();
-        this.fillInventoryWith(playerInventory.player, this.inventory, additionalData);
         int n;
         int m;
         for (n = 0; n < rows; ++n) {
@@ -48,13 +46,11 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
                 });
             }
         }
-
         for (n = 0; n < 3; ++n) {
             for (m = 0; m < 9; ++m) {
                 this.addSlot(new Slot(playerInventory, m + n * 9 + 9, 8 + m * 18, 103 + n * 18 + i));
             }
         }
-
         for (n = 0; n < 9; ++n) {
             this.addSlot(new Slot(playerInventory, n, 8 + n * 18, 161 + i));
         }
@@ -71,8 +67,6 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
         };
     }
 
-    protected abstract void fillInventoryWith(Player player, SeparateInv inv, T additionalData);
-
     @Override
     public boolean stillValid(Player player) {
         return true;
@@ -82,6 +76,7 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
     public void clicked(int i, int mouse, ClickType clickType, Player playerEntity) {
         if (i == -999) {
             super.clicked(i, mouse, clickType, playerEntity);
+            this.onDrag(mouse, clickType, playerEntity);
             return;
         }
         if (i < 0)
@@ -97,6 +92,10 @@ public abstract class EditableServerOnlyScreenHandler<T> extends AbstractContain
         ItemStack stack = slot.getItem().copy();
         for (ContainerListener listener : ((AbstractContainerAccessor) this).listeners())
             listener.slotChanged(this, i, stack);
+    }
+
+    protected void onDrag(int mouse, ClickType clickType, Player playerEntity) {
+
     }
 
     @Override

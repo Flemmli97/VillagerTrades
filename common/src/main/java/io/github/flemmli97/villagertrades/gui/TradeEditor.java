@@ -1,6 +1,5 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -18,6 +17,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,11 +33,13 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.IntPredicate;
 
-public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Data> {
+public class TradeEditor extends EditableServerOnlyScreenHandler {
 
     public static int OFFERS_PER_PAGE = 8;
     private static final IntPredicate IS_TRADE_SLOT = index -> {
@@ -51,21 +54,46 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
     private int page, maxPages;
     private final AbstractVillager villager;
 
-    protected TradeEditor(int syncId, Inventory playerInventory, Data data) {
-        super(syncId, playerInventory, 6, true, IS_TRADE_SLOT, data);
-        this.villager = data.villager;
+    private List<MerchantOffer> currentPageOffers;
+    private boolean changed;
+
+    protected TradeEditor(int syncId, Inventory playerInventory, AbstractVillager villager) {
+        super(syncId, playerInventory, 6, true, IS_TRADE_SLOT);
+        this.villager = villager;
+        this.updatePage();
     }
 
     public static void openGui(ServerPlayer player, AbstractVillager villager) {
         MenuProvider fac = new MenuProvider() {
             @Override
             public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-                return new TradeEditor(syncId, inv, new Data(villager));
+                return new TradeEditor(syncId, inv, villager);
             }
 
             @Override
             public Component getDisplayName() {
                 return villager.getDisplayName();
+            }
+        };
+        player.openMenu(fac);
+    }
+
+    public static void openFrom(ServerPlayer player, MerchantDataBacktrack offerEditor) {
+        MenuProvider fac = new MenuProvider() {
+            @Override
+            public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+                MerchantData data = offerEditor.getMerchantData();
+                TradeEditor editor = new TradeEditor(syncId, inv, data.villager());
+                editor.page = data.page();
+                editor.currentPageOffers = data.currentOffers();
+                editor.changed = data.changed;
+                editor.updateOfferSlots();
+                return editor;
+            }
+
+            @Override
+            public Component getDisplayName() {
+                return offerEditor.getMerchantData().villager().getDisplayName();
             }
         };
         player.openMenu(fac);
@@ -78,7 +106,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
     }
 
     public static ItemStack tradingFiller() {
-        ItemStack stack = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
+        ItemStack stack = new ItemStack(Items.YELLOW_STAINED_GLASS_PANE);
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         return stack;
     }
@@ -93,61 +121,27 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                 new ClientboundSoundPacket(event, SoundSource.PLAYERS, player.position().x, player.position().y, player.position().z, vol, pitch, player.level().getRandom().nextLong()));
     }
 
-    @Override
-    protected void fillInventoryWith(Player player, SeparateInv inv, Data data) {
-        if (!(player instanceof ServerPlayer serverPlayer))
-            return;
-        MerchantOffers offers = data.villager.getOffers();
-        this.maxPages = offers.size() / OFFERS_PER_PAGE;
-        for (int i = 0; i < 54; i++) {
-            if (i == 0) {
-                ItemStack stack = new ItemStack(Items.BARRIER);
-                stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.close").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-                inv.updateStack(i, stack);
-            } else if (i == 1) {
-                ItemStack stack = ItemStack.EMPTY;
-                if (this.page > 0) {
-                    stack = new ItemStack(Items.ARROW);
-                    stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.previous").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-                }
-                inv.updateStack(i, stack);
-            } else if (i == 8) {
-                ItemStack close = ItemStack.EMPTY;
-                if (this.page < this.maxPages) {
-                    close = new ItemStack(Items.ARROW);
-                    close.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.next").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-                }
-                inv.updateStack(i, close);
-            } else if (i / 9 == 1)
-                inv.updateStack(i, emptyFiller());
-            else if (i > 17) {
-                int modI = i % 9;
-                if (modI == 4)
-                    inv.updateStack(i, emptyFiller());
-                else if (modI == 2 || modI == 7)
-                    inv.updateStack(i, tradingFiller());
-            }
-        }
-        for (int x = 0; x < OFFERS_PER_PAGE; x++) {
-            int idx = x + OFFERS_PER_PAGE * this.page;
-            if (idx < offers.size()) {
-                MerchantOffer offer = offers.get(idx);
-                int firstIdx = 18 + x * 9;
-                if (x > 3)
-                    firstIdx = 18 + (x - 4) * 9 + 5;
-                inv.updateStack(firstIdx, offer.getBaseCostA());
-                inv.updateStack(firstIdx + 1, offer.getCostB());
-                inv.updateStack(firstIdx + 2, offerEditStack(offer, serverPlayer.serverLevel().registryAccess()));
-                inv.updateStack(firstIdx + 3, offer.getResult());
-            }
-        }
+    public static OfferState validateTrade(MerchantOffer offer) {
+        if (offer == null)
+            return OfferState.NONE;
+        return !offer.getBaseCostA().isEmpty() && !offer.getResult().isEmpty() ? OfferState.VALID : OfferState.INVALID;
     }
 
-    private static ItemStack offerEditStack(MerchantOffer offer, RegistryAccess registryAccess) {
-        ItemStack stack = new ItemStack(Items.LIME_STAINED_GLASS_PANE);
+    public static boolean offerEq(MerchantOffer first, MerchantOffer sec) {
+        return first.getItemCostA() == sec.getItemCostA() // Copy uses same instance so should be fine
+                && first.getItemCostB() == sec.getItemCostB()
+                && ItemStack.isSameItemSameComponents(first.getResult(), sec.getResult());
+    }
+
+    private static ItemStack offerEditStack(MerchantOffer offer, RegistryAccess registryAccess, OfferState valid) {
+        ItemStack stack = new ItemStack(valid == OfferState.VALID ? Items.LIME_STAINED_GLASS_PANE : Items.ORANGE_STAINED_GLASS_PANE);
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.trade.edit")
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.AQUA)));
-        stack.set(DataComponents.LORE, new ItemLore(List.of(
+        List<Component> lore = new ArrayList<>();
+        if (valid == OfferState.INVALID)
+            lore.add(Component.translatable("villagertrades.gui.offer.tooltip.invalid")
+                    .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.DARK_RED)));
+        lore.addAll(List.of(
                 ((MerchantOfferMixinInterface) offer).isInfinite() ?
                         Component.translatable("villagertrades.gui.trade.edit.infinite")
                                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
@@ -160,14 +154,15 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
                 Component.translatable("villagertrades.gui.trade.edit.price", offer.getPriceMultiplier(), offer.getSpecialPriceDiff())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
-        )));
+        ));
+        stack.set(DataComponents.LORE, new ItemLore(lore));
         stack.enchant(registryAccess.registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
         stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
                 .withTooltip(false));
         return stack;
     }
 
-    private void flipPage() {
+    private void updatePage() {
         MerchantOffers offers = this.villager.getOffers();
         this.maxPages = offers.size() / OFFERS_PER_PAGE;
         for (int i = 0; i < 54; i++) {
@@ -181,6 +176,10 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                     stack = new ItemStack(Items.ARROW);
                     stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.previous").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 }
+                this.slots.get(i).set(stack);
+            } else if (i == 4 && this.villager instanceof Villager) {
+                ItemStack stack = new ItemStack(Items.SUNFLOWER);
+                stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.villager.edit.data").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 this.slots.get(i).set(stack);
             } else if (i == 8) {
                 ItemStack next = ItemStack.EMPTY;
@@ -201,85 +200,132 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
                     this.slots.get(i).set(ItemStack.EMPTY);
             }
         }
-        this.broadcastChanges();
-        for (int x = 0; x < OFFERS_PER_PAGE; x++) {
-            int idx = x + OFFERS_PER_PAGE * this.page;
-            if (idx < offers.size()) {
-                MerchantOffer offer = offers.get(idx);
-                int firstIdx = 18 + x * 9;
-                if (x > 3)
-                    firstIdx = 18 + (x - 4) * 9 + 5;
-                this.slots.get(firstIdx).set(offer.getBaseCostA());
-                this.slots.get(firstIdx + 1).set(offer.getCostB());
-                this.slots.get(firstIdx + 2).set(offerEditStack(offer, this.villager.level().registryAccess()));
-                this.slots.get(firstIdx + 3).set(offer.getResult());
+        this.currentPageOffers = new ArrayList<>(Collections.nCopies(OFFERS_PER_PAGE, null));
+        for (int i = 0; i < OFFERS_PER_PAGE; i++) {
+            int offerIdx = i + OFFERS_PER_PAGE * this.page;
+            if (offerIdx < offers.size()) {
+                MerchantOffer offer = offers.get(offerIdx);
+                this.currentPageOffers.set(i, offer.copy());
             }
         }
+        this.updateOfferSlots();
         this.broadcastChanges();
     }
 
-    public int getOfferIndex(int index) {
-        if (index < 18)
+    private void updateOfferSlots() {
+        for (int i = 0; i < OFFERS_PER_PAGE; i++) {
+            int offerIdx = i + OFFERS_PER_PAGE * this.page;
+            int firstIdx = this.getTradeStartSlotIndex(i);
+            MerchantOffer offer = this.currentPageOffers.get(offerIdx);
+            if (offer != null) {
+                this.slots.get(firstIdx).set(offer.getBaseCostA());
+                this.slots.get(firstIdx + 1).set(offer.getCostB());
+                this.slots.get(firstIdx + 2).set(offerEditStack(offer, this.villager.level().registryAccess(), this.validateTrade(offer)));
+                this.slots.get(firstIdx + 3).set(offer.getResult());
+            } else {
+                this.slots.get(firstIdx + 2).set(tradingFiller());
+            }
+        }
+    }
+
+    public int getTradeStartSlotIndex(int index) {
+        int firstIdx = 18 + index * 9;
+        if (index > 3)
+            firstIdx = 18 + (index - 4) * 9 + 5;
+        return firstIdx;
+    }
+
+    private int getOfferIndex(int slotIdx) {
+        if (slotIdx < 18)
             return -1;
-        index -= 18;
-        int idx = index / 9 + OFFERS_PER_PAGE * this.page;
-        if (index % 9 > 4) {
+        slotIdx -= 18;
+        int idx = slotIdx / 9 + OFFERS_PER_PAGE * this.page;
+        if (slotIdx % 9 > 4) {
             idx += 4;
         }
         return idx;
     }
 
-    public MerchantOffer getOfferFromSlot(int index) {
-        int offerIndex = this.getOfferIndex(index);
+    public MerchantOffer getOfferFromSlot(int slotIdx) {
+        int offerIndex = this.getOfferIndex(slotIdx);
         if (offerIndex == -1)
             return null;
-        MerchantOffers offers = this.villager.getOffers();
-        if (offerIndex < offers.size())
-            return offers.get(offerIndex);
-        return offers.get(offers.size() - 1);
+        if (offerIndex < OFFERS_PER_PAGE)
+            return this.currentPageOffers.get(offerIndex);
+        return null;
     }
 
-    public void updateOfferFor(int index) {
-        if (index < 18)
-            return;
-        int idx = index - 18;
-        int offerIndex = idx / 9 + OFFERS_PER_PAGE * this.page;
-        int firstIdx = index / 9 * 9;
-        if (idx % 9 > 4) {
-            offerIndex += 4;
-            firstIdx += 5;
-        }
-        MerchantOffers offers = this.villager.getOffers();
-        ItemStack first = this.slots.get(firstIdx).getItem();
-        ItemStack second = this.slots.get(firstIdx + 1).getItem();
-        ItemStack result = this.slots.get(firstIdx + 3).getItem();
-        if (first.isEmpty() && second.isEmpty() && result.isEmpty()) {
-            if (offerIndex < offers.size()) {
-                offers.remove(offerIndex);
-            }
-        } else if (!first.isEmpty()) {
+    public void updateOffers() {
+        for (int i = 0; i < OFFERS_PER_PAGE; i++) {
+            MerchantOffer current = this.currentPageOffers.get(i);
+            int firstIdx = this.getTradeStartSlotIndex(i);
+            ItemStack first = this.slots.get(firstIdx).getItem();
+            ItemStack second = this.slots.get(firstIdx + 1).getItem();
+            ItemStack result = this.slots.get(firstIdx + 3).getItem();
             MerchantOffer offer;
-            ItemCost firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentPredicate.allOf(first.getComponents()));
-            ItemCost secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
-            if (offerIndex < offers.size()) {
-                MerchantOffer current = offers.get(offerIndex);
-                offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, current.getUses(), current.getMaxUses(), current.getXp(), current.getPriceMultiplier(), current.getDemand());
-                offers.set(offerIndex, offer);
+            if (first.isEmpty() && second.isEmpty() && result.isEmpty()) {
+                offer = null;
             } else {
-                offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, 0, 4, 0, 0, 0);
-                offers.add(offer);
+                ItemCost firstCost;
+                ItemCost secondCost = null;
+                if (!first.isEmpty()) {
+                    firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentPredicate.allOf(first.getComponents()));
+                    secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
+                } else {
+                    firstCost = new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
+                }
+                if (current != null) {
+                    offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, current.getUses(), current.getMaxUses(), current.getXp(), current.getPriceMultiplier(), current.getDemand());
+                } else {
+                    offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, 0, 4, 0, 0, 0);
+                }
             }
-            this.slots.get(firstIdx + 2).set(offerEditStack(offer, this.villager.level().registryAccess()));
+            OfferState state = this.validateTrade(offer);
+            if (state == OfferState.NONE) {
+                this.slots.get(firstIdx + 2).set(tradingFiller());
+            } else {
+                this.slots.get(firstIdx + 2).set(offerEditStack(offer, this.villager.level().registryAccess(), state));
+            }
+            this.currentPageOffers.set(i, offer);
         }
-        this.flipPage();
-        /*this.maxPages = offers.size() / OFFERS_PER_PAGE;
-        if (this.page < this.maxPages) {
-            ItemStack next = new ItemStack(Items.ARROW);
-            next.setHoverName(Component.translatable("villagertrades.gui.next").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
-            this.slots.get(8).set(next);
-        } else {
-            this.slots.get(8).set(ItemStack.EMPTY);
-        }*/
+        this.broadcastChanges();
+    }
+
+    private void saveCurrentPage() {
+        MerchantOffers offers = this.villager.getOffers();
+        int offset = 0;
+        for (int i = 0; i < OFFERS_PER_PAGE; i++) {
+            int offerIdx = i + OFFERS_PER_PAGE * this.page - offset;
+            MerchantOffer offer = this.currentPageOffers.get(i);
+            if (offer == null || validateTrade(offer) != OfferState.VALID) {
+                if (offerIdx < offers.size()) {
+                    offers.remove(offerIdx);
+                    this.changed = true;
+                    --offset;
+                }
+            } else {
+                if (offerIdx < offers.size()) {
+                    if (!offerEq(offer, offers.get(offerIdx)))
+                        this.changed = true;
+                    offers.set(offerIdx, offer);
+                } else {
+                    offers.add(offer);
+                    this.changed = true;
+                }
+            }
+        }
+        if (this.changed) {
+            this.changed = false;
+            if (this.villager instanceof Villager v) {
+                if (v.getVillagerXp() == 0)
+                    v.setVillagerXp(1); // Prevent resetting
+                if (v.getVillagerData().getProfession() == VillagerProfession.NONE || v.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
+                    v.setVillagerData(v.getVillagerData().setProfession(VillagerProfession.FARMER));
+                    this.villager.getOffers().clear();
+                    this.villager.getOffers().addAll(offers);
+                }
+            }
+        }
     }
 
     @Override
@@ -290,36 +336,67 @@ public class TradeEditor extends EditableServerOnlyScreenHandler<TradeEditor.Dat
             return true;
         }
         if (index == 1) {
+            this.saveCurrentPage();
             this.page--;
-            this.flipPage();
+            this.updatePage();
             TradeEditor.playSongToPlayer(player, SoundEvents.UI_BUTTON_CLICK, 1, 1f);
             return true;
         }
         if (index == 8) {
+            this.saveCurrentPage();
             this.page++;
-            this.flipPage();
+            this.updatePage();
+            TradeEditor.playSongToPlayer(player, SoundEvents.UI_BUTTON_CLICK, 1, 1f);
+            return true;
+        }
+        if (index == 4) {
+            VillagerDataEditor.openGui(player, this.villager, this.page, this.currentPageOffers, this.changed);
             TradeEditor.playSongToPlayer(player, SoundEvents.UI_BUTTON_CLICK, 1, 1f);
             return true;
         }
         if (IS_EDIT_SLOT.test(index)) {
             MerchantOffer offer = this.getOfferFromSlot(index);
             if (offer != null) {
-                OfferEditor.openGui(player, this.villager, offer);
+                OfferEditor.openGui(player, this.villager, offer, this.page, this.currentPageOffers, this.changed);
                 TradeEditor.playSongToPlayer(player, SoundEvents.UI_BUTTON_CLICK, 1, 1f);
                 return true;
             }
             return false;
         }
-        this.updateOfferFor(index);
+        this.updateOffers();
         return true;
     }
 
     @Override
+    public void onDrag(int mouse, ClickType clickType, Player playerEntity) {
+        this.updateOffers();
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        this.saveCurrentPage();
+    }
+
+    @Override
     protected boolean isRightSlot(int slot, ClickType clickType) {
-        return slot == 0 || (this.page > 0 && slot == 1) || (this.page < this.maxPages && slot == 8) || IS_TRADE_SLOT.test(slot)
+        return slot == 0 || slot == 4 || (this.page > 0 && slot == 1) || (this.page < this.maxPages && slot == 8) || IS_TRADE_SLOT.test(slot)
                 || IS_EDIT_SLOT.test(slot);
     }
 
-    record Data(AbstractVillager villager) {
+    public enum OfferState {
+        NONE,
+        INVALID,
+        VALID
+    }
+
+    public interface MerchantDataBacktrack {
+
+        MerchantData getMerchantData();
+
+    }
+
+    public record MerchantData(AbstractVillager villager, List<MerchantOffer> currentOffers, int page,
+                               boolean changed) {
     }
 }

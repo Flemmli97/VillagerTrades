@@ -29,6 +29,11 @@ public class ENLangGen extends ServerLangGen {
         this.add("villagertrades.gui.trade.edit.xp", "Reward XP: %s - Amount: %s");
         this.add("villagertrades.gui.trade.edit.demand", "Demand: %s");
         this.add("villagertrades.gui.trade.edit.price", "Price Multiplier: %s - Special Multiplier: %s");
+
+        this.add("villagertrades.gui.villager.edit.data", "Edit villager data");
+        this.add("villagertrades.gui.villager.edit.profession", "Edit villager profession");
+        this.add("villagertrades.gui.villager.edit.reset", "Reset villager trades");
+
         this.add("villagertrades.gui.offer.edit", "Edit offer");
         this.add("villagertrades.gui.offer.edit.uses", "Edit uses");
         this.add("villagertrades.gui.offer.edit.maxUses", "Edit max uses");
@@ -39,6 +44,7 @@ public class ENLangGen extends ServerLangGen {
         this.add("villagertrades.gui.offer.edit.demand", "Edit current demand");
         this.add("villagertrades.gui.offer.edit.priceMultiplier", "Edit price multiplier");
 
+        this.add("villagertrades.gui.offer.tooltip.invalid", "Invalid Offer. Price and Result item cannot be empty!");
         this.add("villagertrades.gui.offer.tooltip.uses", "Uses: %s");
         this.add("villagertrades.gui.offer.tooltip.maxUses", "Max Uses: %s");
         this.add("villagertrades.gui.offer.tooltip.infinite", "Infinite: %s");

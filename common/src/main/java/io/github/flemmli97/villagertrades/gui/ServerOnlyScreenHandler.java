@@ -1,6 +1,5 @@
 package io.github.flemmli97.villagertrades.gui;
 
-import io.github.flemmli97.villagertrades.gui.inv.SeparateInv;
 import io.github.flemmli97.villagertrades.gui.inv.SeparateInvImpl;
 import io.github.flemmli97.villagertrades.gui.inv.SlotDelegate;
 import io.github.flemmli97.villagertrades.mixin.AbstractContainerAccessor;
@@ -15,17 +14,16 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ServerOnlyScreenHandler<T> extends AbstractContainerMenu {
+public abstract class ServerOnlyScreenHandler extends AbstractContainerMenu {
 
     protected final int size;
     private final SeparateInvImpl inventory;
 
-    protected ServerOnlyScreenHandler(int syncId, Inventory playerInventory, int rows, T additionalData) {
+    protected ServerOnlyScreenHandler(int syncId, Inventory playerInventory, int rows) {
         super(fromRows(rows), syncId);
         int i = (rows - 4) * 18;
         this.inventory = new SeparateInvImpl(rows * 9, e -> false);
         this.size = this.inventory.getContainerSize();
-        this.fillInventoryWith(playerInventory.player, this.inventory, additionalData);
         int n;
         int m;
         for (n = 0; n < rows; ++n) {
@@ -75,8 +73,6 @@ public abstract class ServerOnlyScreenHandler<T> extends AbstractContainerMenu {
             default -> MenuType.GENERIC_9x1;
         };
     }
-
-    protected abstract void fillInventoryWith(Player player, SeparateInv inv, T additionalData);
 
     @Override
     public boolean stillValid(Player player) {
