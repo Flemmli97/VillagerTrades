@@ -1,3 +1,7 @@
+VillagerTrades 1.0.4
+=================
+- Update translation lib
+
 VillagerTrades 1.0.3
 =================
 - Fix changing some trade properties crashing since non mutable
