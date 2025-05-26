@@ -1,4 +1,4 @@
-package io.github.flemmli97.simplequests.forge.data;
+package io.github.flemmli97.simplequests.neoforge.data;
 
 import io.github.flemmli97.linguabib.api.ServerLangGen;
 import io.github.flemmli97.villagertrades.VillagerTrades;

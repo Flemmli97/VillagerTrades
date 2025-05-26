@@ -1,4 +1,4 @@
-package io.github.flemmli97.simplequests.forge;
+package io.github.flemmli97.simplequests.neoforge;
 
 import io.github.flemmli97.villagertrades.LoaderHandler;
 

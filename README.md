@@ -18,7 +18,7 @@ dependencies {
     //Fabric/Loom==========    
     modImplementation("io.github.flemmli97:villagertrades:${minecraft_version}-${mod_version}-${mod_loader}")
     
-    //Forge==========    
+    //NeoForge/Forge==========    
     compile fg.deobf("io.github.flemmli97:villagertrades:${minecraft_version}-${mod_version}-${mod_loader}")
 }
 ```
