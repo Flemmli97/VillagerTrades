@@ -4,7 +4,6 @@ import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import io.github.flemmli97.villagertrades.mixin.MerchantOfferAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,8 +17,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.trading.MerchantOffer;
 
 import java.util.List;
@@ -86,9 +83,7 @@ public class OfferEditor extends ServerOnlyScreenHandler implements TradeEditor.
         stack = new ItemStack(Items.LAPIS_LAZULI);
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.offer.edit.rewardExp").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
         if (this.offer.shouldRewardExp()) {
-            stack.enchant(this.villager.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
-            stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
-                    .withTooltip(false));
+            stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         }
         stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatable("villagertrades.gui.offer.tooltip.rewardExp", Component.translatable(this.offer.shouldRewardExp() ? "villagertrades.gui.true" : "villagertrades.gui.false"))
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));

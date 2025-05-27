@@ -4,10 +4,9 @@ import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentPredicate;
+import net.minecraft.core.component.DataComponentExactPredicate;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -27,8 +26,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
@@ -156,9 +153,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
         ));
         stack.set(DataComponents.LORE, new ItemLore(lore));
-        stack.enchant(registryAccess.registryOrThrow(Registries.ENCHANTMENT).getHolderOrThrow(Enchantments.UNBREAKING), 1);
-        stack.set(DataComponents.ENCHANTMENTS, stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
-                .withTooltip(false));
+        stack.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         return stack;
     }
 
@@ -269,10 +264,10 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
                 ItemCost firstCost;
                 ItemCost secondCost = null;
                 if (!first.isEmpty()) {
-                    firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentPredicate.allOf(first.getComponents()));
-                    secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
+                    firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentExactPredicate.allOf(first.getComponents()));
+                    secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentExactPredicate.allOf(second.getComponents()));
                 } else {
-                    firstCost = new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
+                    firstCost = new ItemCost(second.getItemHolder(), second.getCount(), DataComponentExactPredicate.allOf(second.getComponents()));
                 }
                 if (current != null) {
                     offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, current.getUses(), current.getMaxUses(), current.getXp(), current.getPriceMultiplier(), current.getDemand());
@@ -280,7 +275,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
                     offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, 0, 4, 0, 0, 0);
                 }
             }
-            OfferState state = this.validateTrade(offer);
+            OfferState state = validateTrade(offer);
             if (state == OfferState.NONE) {
                 this.slots.get(firstIdx + 2).set(tradingFiller());
             } else {
@@ -319,8 +314,8 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
             if (this.villager instanceof Villager v) {
                 if (v.getVillagerXp() == 0)
                     v.setVillagerXp(1); // Prevent resetting
-                if (v.getVillagerData().getProfession() == VillagerProfession.NONE || v.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
-                    v.setVillagerData(v.getVillagerData().setProfession(VillagerProfession.FARMER));
+                if (v.getVillagerData().profession().is(VillagerProfession.NONE) || v.getVillagerData().profession().is(VillagerProfession.NITWIT)) {
+                    v.setVillagerData(v.getVillagerData().withProfession(v.registryAccess().getOrThrow(VillagerProfession.FARMER)));
                     this.villager.getOffers().clear();
                     this.villager.getOffers().addAll(offers);
                 }

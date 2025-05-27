@@ -1,7 +1,7 @@
 apply from: "https://raw.githubusercontent.com/Flemmli97/GradleScripts/arch-loom-v2/fabric.gradle"
 
 repositories {
-    mavenCentral()
+    mavenLocal()
     maven {
         name = 'Fabric-Permission-API'
         url 'https://oss.sonatype.org/content/repositories/snapshots'

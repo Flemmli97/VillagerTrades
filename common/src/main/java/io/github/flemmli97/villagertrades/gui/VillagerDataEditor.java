@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -23,10 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.trading.MerchantOffer;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 public class VillagerDataEditor extends ServerOnlyScreenHandler implements TradeEditor.MerchantDataBacktrack {
 
@@ -44,7 +45,7 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
     private final boolean changed;
 
     private int professionIdx = -1;
-    private final List<VillagerProfession> professions;
+    private final List<Holder.Reference<VillagerProfession>> professions;
 
     protected VillagerDataEditor(int syncId, Inventory playerInventory, AbstractVillager villager, int page, List<MerchantOffer> currentOffers, boolean changed) {
         super(syncId, playerInventory, 1);
@@ -52,13 +53,13 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
         this.page = page;
         this.currentOffers = currentOffers;
         this.changed = changed;
-        this.professions = BuiltInRegistries.VILLAGER_PROFESSION.holders()
+        this.professions = BuiltInRegistries.VILLAGER_PROFESSION.listElements()
+                .filter(profession -> !profession.is(VillagerProfession.NONE) && !profession.is(VillagerProfession.NITWIT))
                 .sorted(Comparator.comparing(h -> h.key().location(), RESOURCE_LOCATION_COMPARATOR))
-                .map(Holder.Reference::value)
-                .filter(profession -> profession != VillagerProfession.NONE && profession != VillagerProfession.NITWIT).toList();
+                .toList();
         if (this.villager instanceof Villager v) {
             for (int i = 0; i < this.professions.size(); i++) {
-                if (this.professions.get(i) == v.getVillagerData().getProfession()) {
+                if (this.professions.get(i).is(v.getVillagerData().profession())) {
                     this.professionIdx = i;
                     break;
                 }
@@ -89,13 +90,19 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
         if (this.villager instanceof Villager v) {
             stack = new ItemStack(Items.LECTERN);
             stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.villager.edit.profession").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GOLD)));
-            stack.set(DataComponents.LORE, new ItemLore(List.of(Component.translatableWithFallback(v.getVillagerData().getProfession().name(), StringUtils.capitalize(v.getVillagerData().getProfession().name()))
-                    .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)))));
+            stack.set(DataComponents.LORE, new ItemLore(List.of(with(v.getVillagerData().profession().value().name(),
+                    m -> m.setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))))));
             this.slots.get(3).set(stack);
         }
         stack = new ItemStack(Items.REDSTONE_BLOCK);
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.villager.edit.reset").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.DARK_RED)));
         this.slots.get(5).set(stack);
+    }
+
+    private static Component with(Component comp, Function<MutableComponent, Component> cons) {
+        if (comp instanceof MutableComponent mut)
+            return cons.apply(mut);
+        return comp;
     }
 
     @Override
@@ -110,7 +117,7 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
                 if (this.villager instanceof Villager villager) {
                     TradeEditor.playSongToPlayer(player, SoundEvents.VILLAGER_YES, 1, 1f);
                     this.professionIdx = (this.professionIdx + 1) % this.professions.size();
-                    villager.setVillagerData(villager.getVillagerData().setProfession(this.professions.get(this.professionIdx)));
+                    villager.setVillagerData(villager.getVillagerData().withProfession(this.professions.get(this.professionIdx)));
                     villager.setVillagerXp(1);
                     this.update();
                     return true;
@@ -120,8 +127,8 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
                 this.villager.getOffers().clear();
                 if (this.villager instanceof Villager villager) {
                     villager.releasePoi(MemoryModuleType.JOB_SITE);
-                    villager.setVillagerData(villager.getVillagerData().setProfession(VillagerProfession.NONE)
-                            .setLevel(0));
+                    villager.setVillagerData(villager.getVillagerData().withProfession(villager.registryAccess(), VillagerProfession.NONE)
+                            .withLevel(0));
                     villager.setVillagerXp(0);
                     villager.refreshBrain((ServerLevel) villager.level());
                 }
