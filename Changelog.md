@@ -1,6 +1,7 @@
 VillagerTrades 1.0.4
 =================
-- Update translation lib
+- Update to 1.21.5  
+~~- Update translation lib~~
 
 VillagerTrades 1.0.3
 =================
