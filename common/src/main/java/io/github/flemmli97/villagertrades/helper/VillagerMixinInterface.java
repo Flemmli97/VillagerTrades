@@ -4,5 +4,5 @@ import net.minecraft.world.item.trading.MerchantOffers;
 
 public interface VillagerMixinInterface {
 
-    void updateOffers(MerchantOffers offers);
+    void villagerTrades$updateOffers(MerchantOffers offers);
 }

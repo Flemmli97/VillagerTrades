@@ -30,5 +30,6 @@ public interface MerchantOfferAccessor {
     void setPriceMultiplier(float priceMultiplier);
 
     @Accessor("xp")
+    @Mutable
     void setXp(int xp);
 }
