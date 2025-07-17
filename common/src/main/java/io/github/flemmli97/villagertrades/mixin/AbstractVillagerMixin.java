@@ -13,7 +13,7 @@ public class AbstractVillagerMixin implements VillagerMixinInterface {
     protected MerchantOffers offers;
 
     @Override
-    public void updateOffers(MerchantOffers offers) {
+    public void villagerTrades$updateOffers(MerchantOffers offers) {
         this.offers = offers;
     }
 }
