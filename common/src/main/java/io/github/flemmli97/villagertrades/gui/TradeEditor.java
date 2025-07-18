@@ -371,8 +371,8 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
             if (this.villager instanceof Villager v) {
                 if (v.getVillagerXp() == 0)
                     v.setVillagerXp(1); // Prevent resetting
-                if (v.getVillagerData().getProfession() == VillagerProfession.NONE || v.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
-                    v.setVillagerData(v.getVillagerData().setProfession(VillagerProfession.FARMER));
+                if (v.getVillagerData().profession() == VillagerProfession.NONE || v.getVillagerData().profession() == VillagerProfession.NITWIT) {
+                    v.setVillagerData(v.getVillagerData().withProfession(this.villager.registryAccess(), VillagerProfession.FARMER));
                 }
                 this.villager.getOffers().clear();
                 this.villager.getOffers().addAll(offers);
