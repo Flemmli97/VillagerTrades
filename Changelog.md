@@ -1,6 +1,8 @@
 VillagerTrades 1.0.4
 =================
 - Update translation lib
+- Fix a mixin crash with final field
+- Fix the trade editor being bork
 
 VillagerTrades 1.0.3
 =================
