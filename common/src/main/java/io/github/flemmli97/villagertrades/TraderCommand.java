@@ -34,5 +34,4 @@ public class TraderCommand {
         TradeEditor.openGui(player, villager);
         return Command.SINGLE_SUCCESS;
     }
-
 }
