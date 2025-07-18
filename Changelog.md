@@ -1,4 +1,4 @@
-VillagerTrades 1.0.4
+VillagerTrades 1.0.5
 =================
 - Update translation lib
 - Fix a mixin crash with final field
