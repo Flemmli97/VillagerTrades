@@ -117,8 +117,10 @@ public class StringResultScreenHandler extends AnvilMenu {
         }
     }
 
-    @Override
-    public void createResult() {
+    /**
+     * Neo Override
+     */
+    public void createResultInternal() {
         if (!this.init)
             this.init = true;
         else {

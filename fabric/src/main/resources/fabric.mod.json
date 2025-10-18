@@ -8,7 +8,7 @@
     "Flemmli97"
   ],
   "contact": {
-    "homepage": "${homepage}",
+    "homepage": "${homepage_fabric}",
     "issues": "https://github.com/Flemmli97/VillagerTrades/issues",
     "sources": "https://github.com/Flemmli97/VillagerTrades"
   },
@@ -21,7 +21,8 @@
     ]
   },
   "mixins": [
-    "villagertrades.mixins.json"
+    "villagertrades.mixins.json",
+    "villagertrades.fabric.mixins.json"
   ],
   "depends": {
     "fabric": ">=${fabric_version}",

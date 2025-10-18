@@ -1,4 +1,4 @@
-package io.github.flemmli97.simplequests.neoforge.data;
+package io.github.flemmli97.villagertrades.neoforge.data;
 
 import com.google.common.collect.ImmutableSet;
 import io.github.flemmli97.linguabib.api.ServerLangGen;

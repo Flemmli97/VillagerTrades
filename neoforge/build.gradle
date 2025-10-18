@@ -1,27 +1,23 @@
-apply from: "https://raw.githubusercontent.com/Flemmli97/GradleScripts/arch-loom-v2/neoforge.gradle"
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'com.modrinth.minotaur' version '2.+'
+    id 'io.github.flemmli97.multiloader.platform-neoforge'
+}
 
-loom {
+neoForge {
     runs {
+        var common = project(":common")
         data {
             serverData()
-            programArgs "--all", "--mod", "villagertrades"
-            programArgs "--output", project(":common").file("src/generated/resources").absolutePath
+            programArguments.addAll "--all", "--mod", "villagertrades"
+            programArguments.addAll "--output", common.file("src/generated/resources").absolutePath
+        }
+        client {
+            jvmArgument "-XX:+AllowEnhancedClassRedefinition"
         }
     }
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        name = "LinguaBib"
-        url "https://maven.blazing-coop.net/releases"
-    }
-}
-
 dependencies {
-    modImplementation include("io.github.flemmli97:lingua_bib:${lingua_bib}-neoforge")
-}
-
-shadowJar {
-    exclude "**/forge/test/**"
+    jarJar(implementation("io.github.flemmli97:lingua_bib:${lingua_bib}-neoforge"))
 }

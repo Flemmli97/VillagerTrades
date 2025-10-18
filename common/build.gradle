@@ -1,20 +1,12 @@
-apply from: "https://raw.githubusercontent.com/Flemmli97/GradleScripts/arch-loom-v2/common.gradle"
-
-repositories {
-    mavenLocal()
-    maven {
-        name = "FTB"
-        url = "https://maven.ftb.dev/releases"
-    }
-    maven {
-        name = "LinguaBib"
-        url "https://maven.blazing-coop.net/releases"
-    }
+plugins {
+    id 'io.github.flemmli97.multiloader.platform-common'
 }
 
 dependencies {
-    modCompileOnly("dev.ftb.mods:ftb-ranks:${rootProject.ftb_ranks}")
-    modImplementation "io.github.flemmli97:lingua_bib:${lingua_bib}-common"
+    commonDependency("dev.ftb.mods:ftb-ranks-neoforge:${rootProject.ftb_ranks}") {
+        transitive = false
+    }
+    commonDependency("io.github.flemmli97:lingua_bib:${lingua_bib}-common")
 }
 
 sourceSets.main.resources {
