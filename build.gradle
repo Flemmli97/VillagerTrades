@@ -8,13 +8,6 @@ subprojects {
     repositories {
         mavenLocal()
         maven {
-            name = "FTB"
-            url = "https://maven.ftb.dev/releases"
-            content {
-                includeGroup 'dev.ftb.mods'
-            }
-        }
-        maven {
             name = "LinguaBib"
             url "https://maven.blazing-coop.net/releases"
             content {
