@@ -1,3 +1,7 @@
+VillagerTrades 1.0.6
+=================
+- Fix mismatching datacomponents on trades
+
 VillagerTrades 1.0.5
 =================
 - Update to 1.21.8
