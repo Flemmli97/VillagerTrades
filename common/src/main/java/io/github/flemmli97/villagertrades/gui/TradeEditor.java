@@ -4,8 +4,10 @@ import io.github.flemmli97.villagertrades.helper.MerchantOfferMixinInterface;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -163,6 +165,11 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
         return stack;
     }
 
+    private static ItemCost costOf(ItemStack stack) {
+        return new ItemCost(stack.getItemHolder(), stack.getCount(),
+                DataComponentPredicate.allOf(PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, stack.getComponentsPatch())));
+    }
+
     private void updatePage(boolean init) {
         for (int i = 0; i < 54; i++) {
             if (i == 0) {
@@ -284,10 +291,10 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
                 ItemCost firstCost;
                 ItemCost secondCost = null;
                 if (!first.isEmpty()) {
-                    firstCost = new ItemCost(first.getItemHolder(), first.getCount(), DataComponentPredicate.allOf(first.getComponents()));
-                    secondCost = second.isEmpty() ? null : new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
+                    firstCost = costOf(first);
+                    secondCost = second.isEmpty() ? null : costOf(second);
                 } else {
-                    firstCost = new ItemCost(second.getItemHolder(), second.getCount(), DataComponentPredicate.allOf(second.getComponents()));
+                    firstCost = costOf(second);
                 }
                 if (current != null) {
                     offer = new MerchantOffer(firstCost, Optional.ofNullable(secondCost), result, current.getUses(), current.getMaxUses(), current.getXp(), current.getPriceMultiplier(), current.getDemand());
