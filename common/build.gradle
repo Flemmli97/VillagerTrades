@@ -6,7 +6,7 @@ dependencies {
     commonDependency("dev.ftb.mods:ftb-ranks-neoforge:${rootProject.ftb_ranks}") {
         transitive = false
     }
-    commonDependency("io.github.flemmli97:lingua_bib:${lingua_bib}-common")
+    implementation("io.github.flemmli97:lingua_bib:${lingua_bib}-common")
 }
 
 sourceSets.main.resources {
