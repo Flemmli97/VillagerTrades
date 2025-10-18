@@ -1,4 +1,4 @@
-package io.github.flemmli97.simplequests.neoforge;
+package io.github.flemmli97.villagertrades.neoforge;
 
 import io.github.flemmli97.villagertrades.TraderCommand;
 import io.github.flemmli97.villagertrades.VillagerTrades;
