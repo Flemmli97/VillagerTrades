@@ -2,21 +2,11 @@ plugins {
     id 'io.github.flemmli97.multiloader.platform-common'
 }
 
-repositories {
-    maven {
-        name = "FTB"
-        url = "https://maven.ftb.dev/releases"
-        content {
-            includeGroup 'dev.ftb.mods'
-        }
-    }
-}
-
 dependencies {
-    compileOnly("dev.ftb.mods:ftb-ranks-neoforge:${rootProject.ftb_ranks}") {
+    commonDependency("dev.ftb.mods:ftb-ranks-neoforge:${rootProject.ftb_ranks}") {
         transitive = false
     }
-    implementation("io.github.flemmli97:lingua_bib:${lingua_bib}-common")
+    compileOnly("io.github.flemmli97:lingua_bib:${lingua_bib}-common")
 }
 
 sourceSets.main.resources {
