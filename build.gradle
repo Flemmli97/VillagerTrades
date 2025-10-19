@@ -14,5 +14,12 @@ subprojects {
                 includeGroup 'io.github.flemmli97'
             }
         }
+        maven {
+            name = "FTB"
+            url = "https://maven.ftb.dev/releases"
+            content {
+                includeGroup 'dev.ftb.mods'
+            }
+        }
     }
 }
