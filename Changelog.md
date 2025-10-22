@@ -1,3 +1,7 @@
+VillagerTrades 1.0.6.b
+=================
+- Fix fabric mixin
+
 VillagerTrades 1.0.6
 =================
 - Fix mismatching datacomponents on trades
