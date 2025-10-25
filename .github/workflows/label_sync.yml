@@ -13,5 +13,5 @@ jobs:
         uses: EndBug/label-sync@v2.3.3
         with:
           token: ${{ github.token }}
-          config-file: 'https://gist.githubusercontent.com/Flemmli97/737956ff9653e1f2416bb7c7a9050514/raw'
+          config-file: 'https://gist.githubusercontent.com/Flemmli97/737956ff9653e1f2416bb7c7a9050514/raw/common_mod_labels.yml'
           delete-other-labels: true
