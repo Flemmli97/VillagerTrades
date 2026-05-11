@@ -1,3 +1,7 @@
+VillagerTrades 1.0.7
+=================
+- Fix no profession villagers trade edit not setting profession (and thus not tradeable)
+
 VillagerTrades 1.0.6.b
 =================
 - Fix fabric mixin
