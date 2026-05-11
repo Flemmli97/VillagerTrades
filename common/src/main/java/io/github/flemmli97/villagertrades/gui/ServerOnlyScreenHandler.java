@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -80,11 +80,11 @@ public abstract class ServerOnlyScreenHandler extends AbstractContainerMenu {
     }
 
     @Override
-    public void clicked(int i, int mouse, ClickType clickType, Player playerEntity) {
+    public void clicked(int i, int mouse, ContainerInput input, Player playerEntity) {
         if (i < 0)
             return;
         Slot slot = this.slots.get(i);
-        if (clickType != ClickType.PICKUP_ALL && this.isRightSlot(i)) {
+        if (input != ContainerInput.PICKUP_ALL && this.isRightSlot(i)) {
             if (((AbstractContainerAccessor) this).containerSync() != null)
                 ((AbstractContainerAccessor) this).containerSync().sendCarriedChange(this, this.getCarried().copy());
             this.handleSlotClicked((ServerPlayer) playerEntity, i, slot, mouse);

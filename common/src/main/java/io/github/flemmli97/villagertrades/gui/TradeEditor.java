@@ -17,13 +17,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -144,10 +144,10 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
         lore.addAll(List.of(
                 ((MerchantOfferMixinInterface) offer).isInfinite() ?
                         Component.translatable("villagertrades.gui.trade.edit.infinite")
-                                .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
+                        .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
                         :
                         Component.translatable("villagertrades.gui.trade.edit.uses", offer.getUses(), offer.getMaxUses())
-                                .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
+                        .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
                 Component.translatable("villagertrades.gui.trade.edit.xp", offer.shouldRewardExp(), offer.getXp())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
                 Component.translatable("villagertrades.gui.trade.edit.demand", offer.getDemand())
@@ -161,7 +161,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
     }
 
     private static ItemCost costOf(ItemStack stack) {
-        return new ItemCost(stack.getItemHolder(), stack.getCount(),
+        return new ItemCost(stack.typeHolder(), stack.getCount(),
                 DataComponentExactPredicate.allOf(PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, stack.getComponentsPatch())));
     }
 
@@ -351,7 +351,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
     }
 
     @Override
-    public void onDrag(int mouse, ClickType clickType, Player playerEntity) {
+    public void onDrag(int mouse, ContainerInput input, Player playerEntity) {
         this.updateOffers();
     }
 
@@ -388,8 +388,8 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
     }
 
     @Override
-    protected boolean isRightSlot(int slot, ClickType clickType) {
-        if (clickType == ClickType.PICKUP_ALL)
+    protected boolean isRightSlot(int slot, ContainerInput input) {
+        if (input == ContainerInput.PICKUP_ALL)
             return true;
         return slot == 0 || slot == 4 || (this.page > 0 && slot == 1) || (this.page < this.maxPages && slot == 8) || IS_TRADE_SLOT.test(slot)
                 || IS_EDIT_SLOT.test(slot);

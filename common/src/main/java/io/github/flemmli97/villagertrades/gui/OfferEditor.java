@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -135,10 +135,10 @@ public class OfferEditor extends ServerOnlyScreenHandler implements TradeEditor.
                         TradeEditor.playSongToPlayer(player, SoundEvents.VILLAGER_NO, 1, 1f);
                     }
                     player.closeContainer();
-                    player.getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
+                    player.level().getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
                 }, () -> {
                     player.closeContainer();
-                    player.getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
+                    player.level().getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
                     TradeEditor.playSongToPlayer(player, SoundEvents.VILLAGER_NO, 1, 1f);
                 });
                 return true;
@@ -154,10 +154,10 @@ public class OfferEditor extends ServerOnlyScreenHandler implements TradeEditor.
                         TradeEditor.playSongToPlayer(player, SoundEvents.VILLAGER_NO, 1, 1f);
                     }
                     player.closeContainer();
-                    player.getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
+                    player.level().getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
                 }, () -> {
                     player.closeContainer();
-                    player.getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
+                    player.level().getServer().execute(() -> OfferEditor.openGui(player, this.villager, this.offer, this.page, this.currentOffers, this.changed));
                     TradeEditor.playSongToPlayer(player, SoundEvents.VILLAGER_NO, 1, 1f);
                 });
                 return true;

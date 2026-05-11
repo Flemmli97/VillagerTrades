@@ -7,15 +7,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.npc.AbstractVillager;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,7 +31,7 @@ import java.util.function.Function;
 
 public class VillagerDataEditor extends ServerOnlyScreenHandler implements TradeEditor.MerchantDataBacktrack {
 
-    private static final Comparator<ResourceLocation> RESOURCE_LOCATION_COMPARATOR = (f, s) -> {
+    private static final Comparator<Identifier> RESOURCE_LOCATION_COMPARATOR = (f, s) -> {
         if (f.getNamespace().equals(s.getNamespace()))
             return f.getPath().compareTo(s.getPath());
         if (f.getNamespace().equals("minecraft"))
@@ -55,7 +55,7 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
         this.changed = changed;
         this.professions = BuiltInRegistries.VILLAGER_PROFESSION.listElements()
                 .filter(profession -> !profession.is(VillagerProfession.NONE) && !profession.is(VillagerProfession.NITWIT))
-                .sorted(Comparator.comparing(h -> h.key().location(), RESOURCE_LOCATION_COMPARATOR))
+                .sorted(Comparator.comparing(h -> h.key().identifier(), RESOURCE_LOCATION_COMPARATOR))
                 .toList();
         if (this.villager instanceof Villager v) {
             for (int i = 0; i < this.professions.size(); i++) {

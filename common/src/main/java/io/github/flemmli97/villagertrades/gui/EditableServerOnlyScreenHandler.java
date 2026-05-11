@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -73,18 +73,18 @@ public abstract class EditableServerOnlyScreenHandler extends AbstractContainerM
     }
 
     @Override
-    public void clicked(int i, int mouse, ClickType clickType, Player playerEntity) {
+    public void clicked(int i, int mouse, ContainerInput input, Player playerEntity) {
         if (i == -999) {
-            super.clicked(i, mouse, clickType, playerEntity);
-            this.onDrag(mouse, clickType, playerEntity);
+            super.clicked(i, mouse, input, playerEntity);
+            this.onDrag(mouse, input, playerEntity);
             return;
         }
         if (i < 0)
             return;
         if (i > 54 || this.allowed.test(i))
-            super.clicked(i, mouse, clickType, playerEntity);
+            super.clicked(i, mouse, input, playerEntity);
         Slot slot = this.slots.get(i);
-        if (this.isRightSlot(i, clickType)) {
+        if (this.isRightSlot(i, input)) {
             if (((AbstractContainerAccessor) this).containerSync() != null)
                 ((AbstractContainerAccessor) this).containerSync().sendCarriedChange(this, this.getCarried().copy());
             this.handleSlotClicked((ServerPlayer) playerEntity, i, slot, mouse);
@@ -94,7 +94,7 @@ public abstract class EditableServerOnlyScreenHandler extends AbstractContainerM
             listener.slotChanged(this, i, stack);
     }
 
-    protected void onDrag(int mouse, ClickType clickType, Player playerEntity) {
+    protected void onDrag(int mouse, ContainerInput input, Player playerEntity) {
 
     }
 
@@ -196,7 +196,7 @@ public abstract class EditableServerOnlyScreenHandler extends AbstractContainerM
         return bl;
     }
 
-    protected abstract boolean isRightSlot(int slot, @Nullable ClickType clickType);
+    protected abstract boolean isRightSlot(int slot, @Nullable ContainerInput input);
 
     /**
      * @param clickType 0 for left click, 1 for right click
