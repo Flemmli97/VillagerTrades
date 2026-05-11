@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom'
+    id 'net.fabricmc.fabric-loom'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'com.modrinth.minotaur' version '2.+'
     id 'io.github.flemmli97.multiloader.platform-fabric'
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    modImplementation "me.lucko:fabric-permissions-api:${rootProject.fabric_permissions_api}"
+    implementation "me.lucko:fabric-permissions-api:${rootProject.fabric_permissions_api}"
 
-    modImplementation include("io.github.flemmli97:lingua_bib:${lingua_bib}-fabric")
+    implementation include("io.github.flemmli97:lingua_bib:${lingua_bib}-fabric")
 }
