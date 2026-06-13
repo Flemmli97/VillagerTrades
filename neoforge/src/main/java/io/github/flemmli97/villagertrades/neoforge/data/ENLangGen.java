@@ -26,7 +26,8 @@ public class ENLangGen extends ServerLangGen {
         this.add("villagertrades.gui.previous", "Previous");
         this.add("villagertrades.gui.trade.edit.infinite", "Infinite Trades");
         this.add("villagertrades.gui.trade.edit.uses", "Uses Left: %s - Max Uses: %s");
-        this.add("villagertrades.gui.trade.edit.xp", "Reward XP: %s - Amount: %s");
+        this.add("villagertrades.gui.trade.edit.xp", "Reward XP: %s");
+        this.add("villagertrades.gui.trade.edit.xp.no", "No XP");
         this.add("villagertrades.gui.trade.edit.demand", "Demand: %s");
         this.add("villagertrades.gui.trade.edit.price", "Price Multiplier: %s - Special Multiplier: %s");
 

@@ -147,11 +147,12 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
         lore.addAll(List.of(
                 ((MerchantOfferMixinInterface) offer).isInfinite() ?
                         Component.translatable("villagertrades.gui.trade.edit.infinite")
-                                .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
-                        :
-                        Component.translatable("villagertrades.gui.trade.edit.uses", offer.getUses(), offer.getMaxUses())
-                                .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
-                Component.translatable("villagertrades.gui.trade.edit.xp", offer.shouldRewardExp(), offer.getXp())
+                        .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY))
+                        : Component.translatable("villagertrades.gui.trade.edit.uses", offer.getUses(), offer.getMaxUses())
+                          .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
+                (offer.shouldRewardExp() ?
+                        Component.translatable("villagertrades.gui.trade.edit.xp", offer.getXp()) :
+                        Component.translatable("villagertrades.gui.trade.edit.xp.no"))
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
                 Component.translatable("villagertrades.gui.trade.edit.demand", offer.getDemand())
                         .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.GRAY)),
