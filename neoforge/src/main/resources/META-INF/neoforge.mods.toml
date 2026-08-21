@@ -7,7 +7,7 @@ modId="villagertrades"
 version="${version}"
 displayName="Villager Trades"
 displayURL = "${homepage_neoforge}"
-logoFile="icon.png"
+iconFile = "icon.png"
 authors="Flemmli97"
 description='''Server sided utility mod to edit villager trades'''
 [[dependencies.villagertrades]]

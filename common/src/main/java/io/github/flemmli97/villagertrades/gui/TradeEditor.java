@@ -98,13 +98,13 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
     }
 
     public static ItemStack emptyFiller() {
-        ItemStack stack = new ItemStack(Items.GRAY_STAINED_GLASS_PANE);
+        ItemStack stack = new ItemStack(Items.STAINED_GLASS_PANE.gray());
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         return stack;
     }
 
     public static ItemStack tradingFiller() {
-        ItemStack stack = new ItemStack(Items.YELLOW_STAINED_GLASS_PANE);
+        ItemStack stack = new ItemStack(Items.STAINED_GLASS_PANE.yellow());
         stack.set(DataComponents.CUSTOM_NAME, Component.literal(""));
         return stack;
     }
@@ -134,7 +134,7 @@ public class TradeEditor extends EditableServerOnlyScreenHandler {
     }
 
     private static ItemStack offerEditStack(MerchantOffer offer, RegistryAccess registryAccess, OfferState valid) {
-        ItemStack stack = new ItemStack(valid == OfferState.VALID ? Items.LIME_STAINED_GLASS_PANE : Items.ORANGE_STAINED_GLASS_PANE);
+        ItemStack stack = new ItemStack(valid == OfferState.VALID ? Items.STAINED_GLASS_PANE.lime() : Items.STAINED_GLASS_PANE.orange());
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.trade.edit")
                 .setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.AQUA)));
         List<Component> lore = new ArrayList<>();

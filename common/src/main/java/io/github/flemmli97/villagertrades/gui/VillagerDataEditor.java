@@ -84,7 +84,7 @@ public class VillagerDataEditor extends ServerOnlyScreenHandler implements Trade
     }
 
     private void update() {
-        ItemStack stack = new ItemStack(Items.RED_TERRACOTTA);
+        ItemStack stack = new ItemStack(Items.DYED_TERRACOTTA.red());
         stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.back").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
         this.slots.get(0).set(stack);
         if (this.villager instanceof Villager v) {

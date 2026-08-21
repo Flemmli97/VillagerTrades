@@ -58,7 +58,7 @@ public class OfferEditor extends ServerOnlyScreenHandler implements TradeEditor.
     private void update() {
         for (int i = 0; i < 36; i++) {
             if (i == 0) {
-                ItemStack stack = new ItemStack(Items.RED_TERRACOTTA);
+                ItemStack stack = new ItemStack(Items.DYED_TERRACOTTA.red());
                 stack.set(DataComponents.CUSTOM_NAME, Component.translatable("villagertrades.gui.back").setStyle(Style.EMPTY.withItalic(false).applyFormat(ChatFormatting.WHITE)));
                 this.slots.get(i).set(stack);
             } else if (i < 9 || i > 27 || i % 9 == 0 || i % 9 == 8) {
