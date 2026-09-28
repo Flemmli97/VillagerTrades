@@ -1,6 +1,6 @@
 VillagerTrades 1.0.8
 =================
-- Update to 26.2  
+- Update to 26.3  
 ~~- Update tooltip for xp in trade editor to be more clear~~
 
 VillagerTrades 1.0.7
